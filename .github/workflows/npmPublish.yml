@@ -1,4 +1,4 @@
-name: Publish package to GitHub Packages
+name: Publish npm pacakge
 on:
   push:
     branches:
