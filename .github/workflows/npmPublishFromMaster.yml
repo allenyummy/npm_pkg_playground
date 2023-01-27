@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  publish:
+  publish-pkg-from-master:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -85,7 +85,7 @@ jobs:
           echo "should-release: ${{ steps.compare.outputs.should-release }}"
           echo "debug-info: ${{ steps.compare.outputs.debug-info }}"
 
-      - name: publish pkg if patch version is changed and never published before
+      - name: publish package if patch version is changed and never published before
         if: steps.compare.outputs.should-release == 'true'
         run: |
           npm publish
