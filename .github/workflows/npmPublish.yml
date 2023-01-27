@@ -47,7 +47,7 @@ jobs:
           remoteVers=${{ steps.remote.outputs.remote-versions }}
           checkChanged=${{ steps.check.outputs.changed }}
           checkNewVersion=${{ steps.check.outputs.version }}
-          checkType=${{ steps.check.outputs.type }} // patch, minor, major 
+          checkType=${{ steps.check.outputs.type }}
           checkCommit=${{ steps.check.outputs.commit }}
           
           if [[ $checkChanged = "false" ]]; then
