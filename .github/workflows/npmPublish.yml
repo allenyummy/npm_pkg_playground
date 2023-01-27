@@ -19,10 +19,12 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@allenyummy'
       
+      - name: install python3
+        run: sudo apt-get install -y python3
+      
       - name: get remote versions and set outputs
         id: remote
         run: |
-          sudo apt-get install -y python3
           remoteVers=$(npm show @allenyummy/npm_pkg_playground versions --json)||remoteVers="[]"
           remoteVersInOneLine=`python3 << END
           print ($remoteVers)
