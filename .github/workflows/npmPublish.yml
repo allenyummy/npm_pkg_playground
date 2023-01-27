@@ -15,23 +15,28 @@ jobs:
       should-release: ${{ steps.compare.outputs.should-release }}
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@allenyummy'
+
       - name: get remote versions
         id: remote
         run: |
           remoteVers=$(npm show @allenyummy/npm_pkg_playground versions)||remoteVer="[]"
           echo "remoteVers: $remoteVers"
           echo "::set-output name=remote-versions::$remoteVers"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check if version has been updated
         id: check
         uses: EndBug/version-check@v2
         with:
           diff-search: true
+
       - name: patch version is changed
         if: steps.check.outputs.changed == 'true' && steps.check.outputs.type == 'patch'
         run: |
