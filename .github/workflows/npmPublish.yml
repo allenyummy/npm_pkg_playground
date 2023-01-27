@@ -22,37 +22,55 @@ jobs:
       - name: install python3
         run: sudo apt-get install -y python3
       
-      - name: get remote versions and set outputs
+      - name: get remote versions and set output for 'steps.remote.outputs.remote-versions'
         id: remote
         run: |
           remoteVers=$(npm show @allenyummy/npm_pkg_playground versions --json)||remoteVers="[]"
           remoteVersInOneLine=`python3 << END
           print ($remoteVers)
           END`
-          echo "remoteVers: $remoteVersInOneLine"
           echo "remote-versions=$remoteVersInOneLine" >> $GITHUB_OUTPUT
+          echo "remoteVers: ${{ steps.remote.outputs.remote-versions }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: print remote versions
-        run: |
-          echo "${{ steps.remote.outputs.remote-versions }}"
 
-      - name: Check if version has been updated
+      - name: Check if version has been updated and set output for 'steps.check.outputs.[changed/version/type/commit]'
         id: check
         uses: EndBug/version-check@v2
         with:
           diff-search: true
-
-      - name: patch version is changed
-        if: steps.check.outputs.changed == 'true' && steps.check.outputs.type == 'patch'
+          
+      - name: set output for 'steps.compare.outputs.should-release'
+        id: compare
         run: |
-          echo "Version change found in commit ${{ steps.check.outputs.commit }}"
-          echo "New version: ${{ steps.check.outputs.version }}"
-          echo "Change type: ${{ steps.check.outputs.type }}"
+          remoteVers = ${{ steps.remote.outputs.remote-versions }}
+          checkChanged=${{ steps.check.outputs.changed }}
+          checkNewVersion=${{ steps.check.outputs.version }}
+          checkType=${{ steps.check.outputs.type }} // patch, minor, major 
+          checkCommit=${{ steps.check.outputs.commit }}
+          isAlreadyPublished=`python3 << END
+          print ('$checkNewVersion' in $remoteVers)
+          END`
+        
+          if [[ $checkChanged = "false" ]]; then
+             echo "should-release=false" >> $GITHUB_OUTPUT
+             exit 1
+          fi
+          
+          if [[ $checkChanged = "true" ]] && [[ $checkType != "patch" ]]; then
+             echo "should-release=false" >> $GITHUB_OUTPUT
+             exit 1
+          fi
+          
+          if [[ $isAlreadyPublished = "true" ]]; then
+             echo "should-release=false" >> $GITHUB_OUTPUT
+             exit 1
+          fi
+      
+          echo "should-release=true" >> $GITHUB_OUTPUT
 
       - name: npm publish if patch version is changed and never published yet
         run: npm publish
-        if: steps.check.outputs.changed == 'true' && steps.check.outputs.type == 'patch'
+        if: steps.compare.outputs.should-release == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
