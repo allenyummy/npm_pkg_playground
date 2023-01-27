@@ -44,7 +44,6 @@ jobs:
       - name: set output for 'steps.compare.outputs.should-release'
         id: compare
         run: |
-          remoteVers=${{ steps.remote.outputs.remote-versions }}
           checkChanged=${{ steps.check.outputs.changed }}
           checkNewVersion=${{ steps.check.outputs.version }}
           checkType=${{ steps.check.outputs.type }}
@@ -60,7 +59,7 @@ jobs:
           fi
           
           isAlreadyPublished=`python3 << END
-          print ('$checkNewVersion' in $remoteVers)
+          print ('$checkNewVersion' in ${{ steps.remote.outputs.remote-versions }})
           END`
           if [[ $isAlreadyPublished = "true" ]]; then
              shouldRelease=false
