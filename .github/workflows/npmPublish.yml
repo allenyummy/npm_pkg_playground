@@ -27,7 +27,7 @@ jobs:
         run: |
           remoteVers=$(npm show @allenyummy/npm_pkg_playground versions --json)||remoteVers=[]
           remoteVersInOneLine=`python3 << END
-          processStr = '[' + ','.join([str(ver) for ver in $remoteVers]) + ']'
+          processStr = '[' + ','.join([f"'{str(ver)}'" for ver in $remoteVers]) + ']'
           print (processStr)
           END`
           echo "remote-versions=$remoteVersInOneLine" >> $GITHUB_OUTPUT
