@@ -49,26 +49,24 @@ jobs:
           checkNewVersion=${{ steps.check.outputs.version }}
           checkType=${{ steps.check.outputs.type }}
           checkCommit=${{ steps.check.outputs.commit }}
+          shouldRelease=true
           
           if [[ $checkChanged = "false" ]]; then
-             echo "should-release=false" >> $GITHUB_OUTPUT
-             exit 1
+             shouldRelease=false
           fi
           
           if [[ $checkChanged = "true" ]] && [[ $checkType != "patch" ]]; then
-             echo "should-release=false" >> $GITHUB_OUTPUT
-             exit 1
+             shouldRelease=false
           fi
           
           isAlreadyPublished=`python3 << END
           print ('$checkNewVersion' in $remoteVers)
           END`
           if [[ $isAlreadyPublished = "true" ]]; then
-             echo "should-release=false" >> $GITHUB_OUTPUT
-             exit 1
+             shouldRelease=false
           fi
-      
-          echo "should-release=true" >> $GITHUB_OUTPUT
+          
+          echo "should-release=$shouldRelease" >> $GITHUB_OUTPUT
 
       - name: npm publish if patch version is changed and never published yet
         run: npm publish
