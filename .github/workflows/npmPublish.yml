@@ -21,15 +21,10 @@ jobs:
         id: check
         uses: EndBug/version-check@v2
         with:
-          file-url: https://github.com/allenyummy/npm_pkg_playground/blob/master/package.json
-
-      - name: Log when changed
-        if: steps.check.outputs.changed == 'true'
-        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
-
-      - name: Log when unchanged
-        if: steps.check.outputs.changed == 'false'
-        run: 'echo "No version change :/"'
+          diff-search: true
+      - name: change patch version
+        if: steps.check.outputs.changed == 'true' && steps.check.outputs.type == 'patch'
+        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'      
       # - run: npm publish
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
