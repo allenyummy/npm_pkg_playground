@@ -10,9 +10,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    outputs:
-      remote-vers: ${{ steps.remote.outpus.remote-versions }}
-      should-release: ${{ steps.compare.outputs.should-release }}
     steps:
       - uses: actions/checkout@v3
 
@@ -22,14 +19,18 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@allenyummy'
 
-      - name: get remote versions
+      - name: get remote versions and set outputs
         id: remote
         run: |
           remoteVers=$(npm show @allenyummy/npm_pkg_playground versions)||remoteVer="[]"
           echo "remoteVers: $remoteVers"
-          echo "::set-output name=remote-versions::$remoteVers"
+          echo "remote-versions=$remoteVers" >> $GITHUB_OUTPUT
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: print remote versions
+        run: |
+          echo "${{ steps.remote.outputs.remote-versions }}"
 
       - name: Check if version has been updated
         id: check
