@@ -35,7 +35,6 @@ jobs:
           print (processStr)
           END`
           echo "remote-versions=$remoteVersInOneLine" >> $GITHUB_OUTPUT
-          echo "remote-versions: ${{ steps.remote.outputs.remote-versions }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -49,8 +48,8 @@ jobs:
         id: compare
         run: |
           checkChanged=${{ steps.check.outputs.changed }}
-          checkNewVersion=${{ steps.check.outputs.version }}
           checkType=${{ steps.check.outputs.type }}
+          checkNewVersion=${{ steps.check.outputs.version }}
           checkCommit=${{ steps.check.outputs.commit }}
           shouldRelease=true
           
@@ -70,6 +69,15 @@ jobs:
           fi
           
           echo "should-release=$shouldRelease" >> $GITHUB_OUTPUT
+          
+
+      - name: echo all steps outputs for debug
+        run: |
+          echo "remote-versions: ${{ steps.remote.outputs.remote-versions }}"
+          echo "check-version-is-changed: ${{ steps.check.outputs.changed }}"
+          echo "check-version-changed-type: ${{ steps.check.outputs.type }}"
+          echo "check-new-version: ${{ steps.check.outputs.version }}"
+          echo "check-commit: ${{ steps.check.outputs.commit }}"
           echo "should-release: ${{ steps.compare.outputs.should-release }}"
 
       - name: publish pkg if patch version is changed and never published yet
