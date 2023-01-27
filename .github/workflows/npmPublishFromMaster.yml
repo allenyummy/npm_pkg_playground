@@ -59,9 +59,9 @@ jobs:
              debugInfo="shouldRelease is $shouldRelease because no new version is detected."
           fi
           
-          if [[ $checkChanged = "true" ]] && [[ $checkType != "patch" ]]; then
+          if [[ $checkChanged = "true" ]] && [[ $checkType != "minor" ]]; then
              shouldRelease=false
-             debugInfo="shouldRelease is $shouldRelease because new version is not updated in patch but in $checkType."
+             debugInfo="shouldRelease is $shouldRelease because new version is not updated in minor but in $checkType."
           fi
           
           isAlreadyPublished=`python3 << END
