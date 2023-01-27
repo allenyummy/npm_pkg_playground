@@ -10,6 +10,9 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      remote-vers: ${{ steps.remote.outpus.remote-versions }}
+      should-release: ${{ steps.compare.outputs.should-release }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -17,6 +20,13 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@allenyummy'
+      - name: get remote versions
+        id: remote
+        run: |
+          remoteVers=$(npm show @allenyummy/npm_pkg_playground versions)||remoteVer="[]"
+          echo "remoteVers: $remoteVers"
+          echo "::set-output name=remote-versions::$remoteVers"
+
       - name: Check if version has been updated
         id: check
         uses: EndBug/version-check@v2
@@ -24,16 +34,13 @@ jobs:
           diff-search: true
       - name: patch version is changed
         if: steps.check.outputs.changed == 'true' && steps.check.outputs.type == 'patch'
-        run: |          
-          git reset --hard ${{ steps.check.outputs.commit }}^
-          PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g')
-
+        run: |
           echo "Version change found in commit ${{ steps.check.outputs.commit }}"
-          echo "Old version: $PACKAGE_VERSION"
           echo "New version: ${{ steps.check.outputs.version }}"
           echo "Change type: ${{ steps.check.outputs.type }}"
 
-
-      # - run: npm publish
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: npm publish if patch version is changed and never published yet
+        run: npm publish
+        if: steps.check.outputs.changed == 'true' && steps.check.outputs.type == 'patch'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
