@@ -52,7 +52,7 @@ jobs:
           checkNewVersion=${{ steps.check.outputs.version }}
           checkCommit=${{ steps.check.outputs.commit }}
           shouldRelease=true
-          debugInfo="${debugInfo:='shouldRelease is $shouldRelease because new patch version is detected and not existed in registry yet.'}"
+          debugInfo="${debugInfo:='shouldRelease is $shouldRelease because new minor version is detected and not existed in registry yet.'}"
           
           if [[ $checkChanged = "false" ]]; then
              shouldRelease=false
@@ -85,7 +85,7 @@ jobs:
           echo "should-release: ${{ steps.compare.outputs.should-release }}"
           echo "debug-info: ${{ steps.compare.outputs.debug-info }}"
 
-      - name: publish package if patch version is changed and never published before
+      - name: publish package if minor version is changed and never published before
         if: steps.compare.outputs.should-release == 'true'
         run: |
           npm publish
