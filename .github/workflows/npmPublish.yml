@@ -52,7 +52,7 @@ jobs:
           checkNewVersion=${{ steps.check.outputs.version }}
           checkCommit=${{ steps.check.outputs.commit }}
           shouldRelease=true
-          debugInfo="${debugInfo:='shouldRelease is $shouldRelease because new patch version is detected and it's not existed in registry yet.'}"
+          debugInfo="${debugInfo:='shouldRelease is $shouldRelease because new patch version is detected and not existed in registry yet.'}"
           
           if [[ $checkChanged = "false" ]]; then
              shouldRelease=false
