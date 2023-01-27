@@ -23,9 +23,9 @@ jobs:
         id: remote
         run: |
           sudo apt-get install -y jq
-          remoteVers=$(jq -s -c $(npm show @allenyummy/npm_pkg_playground versions --json))||remoteVer="[]"
+          // remoteVers=$(jq -s -c $(npm show @allenyummy/npm_pkg_playground versions --json))||remoteVer="[]"
           echo "remoteVers: $remoteVers"
-          echo "remote-versions=$remoteVers" >> $GITHUB_OUTPUT
+          echo "remote-versions=['1', '2']" >> $GITHUB_OUTPUT
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
