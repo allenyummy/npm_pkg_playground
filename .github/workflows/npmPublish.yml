@@ -22,7 +22,7 @@ jobs:
         uses: EndBug/version-check@v2
         with:
           diff-search: true
-      - name: change patch version
+      - name: patch version is changed
         if: steps.check.outputs.changed == 'true' && steps.check.outputs.type == 'patch'
         run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'      
       # - run: npm publish
