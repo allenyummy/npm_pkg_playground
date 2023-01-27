@@ -44,7 +44,7 @@ jobs:
         with:
           diff-search: true
           
-      - name: set output for 'steps.compare.outputs.should-release'
+      - name: set output for 'steps.compare.outputs.[should-release/debug-info]'
         id: compare
         run: |
           checkChanged=${{ steps.check.outputs.changed }}
@@ -52,28 +52,29 @@ jobs:
           checkNewVersion=${{ steps.check.outputs.version }}
           checkCommit=${{ steps.check.outputs.commit }}
           shouldRelease=true
+          debugInfo="${debugInfo:='shouldRelease is $shouldRelease because new patch version is detected and it's not published yet.'}"
           
           if [[ $checkChanged = "false" ]]; then
-             echo "shouldRelease is false because no new version is detected."
              shouldRelease=false
+             debugInfo="shouldRelease is $shouldRelease because no new version is detected."
           fi
           
           if [[ $checkChanged = "true" ]] && [[ $checkType != "patch" ]]; then
-             echo "shouldRelease is false because new version is not updated in patch but $checkType"
              shouldRelease=false
+             debugInfo="shouldRelease is $shouldRelease because new version is not updated in patch but in $checkType."
           fi
           
           isAlreadyPublished=`python3 << END
           print ('$checkNewVersion' in ${{ steps.remote.outputs.remote-versions }})
           END`
           if [[ $isAlreadyPublished = "true" ]]; then
-             echo "shouldRelease is false because new version is already published."
              shouldRelease=false
+             debugInfo="shouldRelease is $shouldRelease because new version is already existed in registry."
           fi
           
           echo "should-release=$shouldRelease" >> $GITHUB_OUTPUT
+          echo "debug-info=$debugInfo" >> $GITHUB_OUTPUT
           
-
       - name: echo all steps outputs for debug
         run: |
           echo "remote-versions: ${{ steps.remote.outputs.remote-versions }}"
@@ -82,6 +83,7 @@ jobs:
           echo "check-new-version: ${{ steps.check.outputs.version }}"
           echo "check-commit: ${{ steps.check.outputs.commit }}"
           echo "should-release: ${{ steps.compare.outputs.should-release }}"
+          echo "debug-info: ${{ steps.compare.outputs.debug-info }}"
 
       - name: publish pkg if patch version is changed and never published yet
         if: steps.compare.outputs.should-release == 'true'
