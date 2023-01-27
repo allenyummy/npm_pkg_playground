@@ -54,10 +54,12 @@ jobs:
           shouldRelease=true
           
           if [[ $checkChanged = "false" ]]; then
+             echo "shouldRelease is false because no new version is detected."
              shouldRelease=false
           fi
           
           if [[ $checkChanged = "true" ]] && [[ $checkType != "patch" ]]; then
+             echo "shouldRelease is false because new version is not updated in patch but $checkType"
              shouldRelease=false
           fi
           
@@ -65,6 +67,7 @@ jobs:
           print ('$checkNewVersion' in ${{ steps.remote.outputs.remote-versions }})
           END`
           if [[ $isAlreadyPublished = "true" ]]; then
+             echo "shouldRelease is false because new version is already published."
              shouldRelease=false
           fi
           
