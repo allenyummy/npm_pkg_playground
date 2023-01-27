@@ -24,7 +24,16 @@ jobs:
           diff-search: true
       - name: patch version is changed
         if: steps.check.outputs.changed == 'true' && steps.check.outputs.type == 'patch'
-        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'      
+        run: |          
+          git reset --hard ${{ steps.check.outputs.commit }}
+          PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g')
+
+          echo "Version change found in commit ${{ steps.check.outputs.commit }}"
+          echo "Old version: $PACKAGE_VERSION"
+          echo "New version: ${{ steps.check.outputs.version }}"
+          echo "Change type: ${{ steps.check.outputs.type }}"
+
+
       # - run: npm publish
       #   env:
       #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
