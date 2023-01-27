@@ -2,7 +2,7 @@
 # Principle1: bump patch for production, bump minor for master.
 # Principle2: latest version of pkg is always from master .
 
-name: Publish npm pacakge from master branch
+name: Publish npm pacakge from production branch
 on:
   push:
     branches:
