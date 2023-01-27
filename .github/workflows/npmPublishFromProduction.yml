@@ -1,6 +1,6 @@
 # Principle0: always bump version by 1 no mater major, minor, or patch.
 # Principle1: bump patch for production, bump minor for master.
-# Principle2: latest version of pkg is always from master .
+# Principle2: latest version of pkg is always from master.
 
 name: Publish npm pacakge from production branch
 on:
@@ -88,6 +88,6 @@ jobs:
       - name: publish package if patch version is changed and never published before
         if: steps.compare.outputs.should-release == 'true'
         run: |
-          npm publish
+          npm publish --tag prod-latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
