@@ -22,7 +22,7 @@ jobs:
       - name: get remote versions and set outputs
         id: remote
         run: |
-          remoteVers=$(npm show @allenyummy/npm_pkg_playground versions)||remoteVer="[]"
+          remoteVers=$(npm show @allenyummy/npm_pkg_playground versions --json)||remoteVer="[]"
           echo "remoteVers: $remoteVers"
           echo "remote-versions=$remoteVers" >> $GITHUB_OUTPUT
         env:
