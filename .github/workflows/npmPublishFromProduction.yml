@@ -5,6 +5,8 @@
 name: Publish npm pacakge from production branch
 on:
   push:
+    paths-ignore:
+      - 'package.json'
     branches:
       - production
 
