@@ -1,10 +1,10 @@
-name: After master
+name: After production
 
 on:
   workflow_run:
     workflows: [Publish npm pacakge from production branch]
     types: [completed]
-    branches: [master]
+    branches: [production]
 
 jobs:
   check:
