@@ -1,0 +1,48 @@
+name: version bump
+on:
+  push:
+    paths-ignore:
+      - 'package*.json'
+    branches:
+      - production
+
+jobs:
+  version_bump:
+    name: 'bump version'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure committer
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@allenyummy'
+      - run: |
+          npm version patch
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "[create-pull-request] automated change [skip azurepipelines]"
+      - name: Check outputs
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+          echo "Pull Request Operation - ${{ steps.cpr.outputs.pull-request-operation }}"
+      - name: Enable Automerge
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.REVIEW_TOKEN }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash
+      - name: Auto approve
+        uses: juliangruber/approve-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.REVIEW_TOKEN }}
+          number: ${{ steps.cpr.outputs.pull-request-number }}
