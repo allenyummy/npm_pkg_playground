@@ -1,18 +1,13 @@
 name: After production
 
 on:
-  workflow_run:
-    workflows: [Publish npm pacakge from production branch]
-    types: [completed]
-    branches: [production]
+  repository_dispatch:
+    types: [trigger-afterProduction-workflow]
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with: 
-          ref: refs/head/production
       - run: |
           echo ${{ github.ref }}
 
