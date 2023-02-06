@@ -1,0 +1,17 @@
+name: After master
+
+on:
+  workflow_run:
+    workflows: [Publish npm pacakge from master branch]
+    types: [completed]
+    branches: [master]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo ${{ github.ref }}
+
+
+    
