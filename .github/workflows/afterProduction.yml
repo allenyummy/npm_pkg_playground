@@ -10,6 +10,9 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with: 
+          ref: refs/head/production
       - run: |
           echo ${{ github.ref }}
 
