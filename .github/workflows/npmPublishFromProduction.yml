@@ -1,0 +1,94 @@
+# Principle 0: Always increment the version by 1, whether it's a major, minor, or patch.
+# Principle 1: Bump minor version for master, while patch version for production, 
+# Principle 2: "latest" tag is always published from master, while "prod-latest" is always published from production.
+
+name: Publish npm pacakge from production branch v2
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  publish-pkg-from-production:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@allenyummy'
+      
+      - name: install python3
+        run: sudo apt-get install -y python3
+      
+      - name: get remote versions and set output for 'steps.remote.outputs.remote-versions'
+        id: remote
+        run: |
+          remoteVers=$(npm show @allenyummy/npm_pkg_playground versions --json)||remoteVers=[]
+          remoteVersInOneLine=`python3 << END
+          processStr = '[' + ','.join([f"'{str(ver)}'" for ver in $remoteVers]) + ']'
+          print (processStr)
+          END`
+          echo "remote-versions=$remoteVersInOneLine" >> $GITHUB_OUTPUT
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if version has been updated and set output for 'steps.check.outputs.[changed/version/type/commit]'
+        id: check
+        uses: EndBug/version-check@v2
+        with:
+          diff-search: true
+          
+      - name: set output for 'steps.compare.outputs.[should-release/debug-info]'
+        id: compare
+        run: |
+          checkChanged=${{ steps.check.outputs.changed }}
+          checkType=${{ steps.check.outputs.type }}
+          checkNewVersion=${{ steps.check.outputs.version }}
+          checkCommit=${{ steps.check.outputs.commit }}
+          shouldRelease=true
+          debugInfo="${debugInfo:='shouldRelease is $shouldRelease because new patch version is detected and not existed in registry yet.'}"
+          
+          if [[ $checkChanged = "false" ]]; then
+             shouldRelease=false
+             debugInfo="shouldRelease is $shouldRelease because no new version is detected."
+          fi
+          
+          if [[ $checkChanged = "true" ]] && [[ $checkType != "patch" ]]; then
+             shouldRelease=false
+             debugInfo="shouldRelease is $shouldRelease because new version is not updated in patch but in $checkType."
+          fi
+          
+          isAlreadyPublished=`python3 << END
+          print (str('$checkNewVersion' in ${{ steps.remote.outputs.remote-versions }}).lower())
+          END`
+          if [[ $isAlreadyPublished = "true" ]]; then
+             shouldRelease=false
+             debugInfo="shouldRelease is $shouldRelease because new version is already existed in registry."
+          fi
+          
+          echo "should-release=$shouldRelease" >> $GITHUB_OUTPUT
+          echo "debug-info=$debugInfo" >> $GITHUB_OUTPUT
+          
+      - name: echo all steps outputs for debug
+        run: |
+          npm version
+          echo "remote-versions: ${{ steps.remote.outputs.remote-versions }}"
+          echo "check-version-is-changed: ${{ steps.check.outputs.changed }}"
+          echo "check-version-changed-type: ${{ steps.check.outputs.type }}"
+          echo "check-new-version: ${{ steps.check.outputs.version }}"
+          echo "check-commit: ${{ steps.check.outputs.commit }}"
+          echo "should-release: ${{ steps.compare.outputs.should-release }}"
+          echo "debug-info: ${{ steps.compare.outputs.debug-info }}"
+
+      - name: publish package if patch version is changed and never published before
+        if: steps.compare.outputs.should-release == 'true'
+        run: |
+          npm publish --tag prod-latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
