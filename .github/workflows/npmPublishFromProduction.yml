@@ -46,7 +46,7 @@ jobs:
           number: ${{ steps.cpr.outputs.pull-request-number }}
 
   publish-pkg-from-production:
-    needs: job1
+    needs: version_bump
     runs-on: ubuntu-latest
     permissions:
       contents: read
