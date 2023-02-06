@@ -2,7 +2,7 @@
 # Principle 1: Bump minor version for master, while patch version for production, 
 # Principle 2: "latest" tag is always published from master, while "prod-latest" is always published from production.
 
-name: Publish npm pacakge from production branch
+name: Publish npm pacakge from production branch v2
 on:
   push:
     branches:
