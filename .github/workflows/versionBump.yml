@@ -48,6 +48,7 @@ jobs:
           number: ${{ steps.cpr.outputs.pull-request-number }}
   
   check:
+    needs: [version_bump]
     name: 'check version'
     runs-on: ubuntu-latest
     steps:
