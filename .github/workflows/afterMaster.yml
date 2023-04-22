@@ -2,9 +2,8 @@ name: After master
 
 on:
   workflow_run:
-    workflows: [Publish npm pacakge from master branch]
+    workflows: [Publish npm pacakge from master branch, version bump]
     types: [completed]
-    branches: [master]
 
 jobs:
   check:
