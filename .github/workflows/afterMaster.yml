@@ -9,9 +9,6 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          ls -al ./.github/workflows
-      
       - uses: actions/checkout@v3
         with:
           ref: production
