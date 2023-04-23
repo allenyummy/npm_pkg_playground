@@ -22,6 +22,7 @@ jobs:
       
       - run: |
           cat ./package.json
+          git log --oneline --graph
 
       - uses: actions/setup-node@v3
         with:
@@ -46,7 +47,7 @@ jobs:
 
       - name: Check if version has been updated and set output for 'steps.check.outputs.[changed/version/type/commit]'
         id: check
-        uses: EndBug/version-check@latest
+        uses: EndBug/version-check@v2
         with:
           diff-search: true
           
