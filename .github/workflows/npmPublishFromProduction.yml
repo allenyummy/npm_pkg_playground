@@ -17,6 +17,8 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: production
       
       - run: |
           cat ./package.json
@@ -45,8 +47,6 @@ jobs:
       - name: Check if version has been updated and set output for 'steps.check.outputs.[changed/version/type/commit]'
         id: check
         uses: EndBug/version-check@v2
-        with:
-          diff-search: true
           
       - name: set output for 'steps.compare.outputs.[should-release/debug-info]'
         id: compare
