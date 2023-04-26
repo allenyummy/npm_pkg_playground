@@ -37,9 +37,9 @@ jobs:
       - name: Print changed files
         run: |
           echo "Changed files:"
-          echo ${{ github.event.head_commit.added }}
-          echo ${{ github.event.head_commit.modified }}
-          echo ${{ github.event.head_commit.removed }}
+          echo ${{ github.event.commits.added }}
+          echo ${{ github.event.commits.modified }}
+          echo ${{ github.event.commits.removed }}
 
           # for file in "${{ github.event.head_commit.added }} "; do
           #   if [[ $file == src/* ]]; then
