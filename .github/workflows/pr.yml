@@ -1,10 +1,13 @@
 name: Pull Request to master
 
 on:
-  pull_request:
-      branches:
-        - master
-
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/*'
+      - '!package.json'
+      - '!package-lock.json'
 
 jobs:
   bump_version:
@@ -23,10 +26,19 @@ jobs:
       - name: Print labels
         run: |
           echo "Label:"
-          for label in "${{ github.event.pull_request.labels.*.name }}"; do
+          for label in "${{ github.event.pull_request.labels }}"; do
               echo "- $label"
           done
       
       - name: Print target branch
         run: |
           echo ${{ github.event.pull_request.base.ref }}
+      
+      - name: Print changed files
+        run: |
+          echo "Changed files:"
+          for file in "${{ github.event.head_commit.added }} ${github.event.head_commit.modified}}"; do
+            if [[ $file == src/* ]]; then
+              echo "- $file"
+            fi
+          done
