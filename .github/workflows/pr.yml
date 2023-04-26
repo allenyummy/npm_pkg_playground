@@ -1,0 +1,21 @@
+name: Pull Request to master
+
+on:
+  pull_request:
+      branches:
+        - master
+
+
+jobs:
+  bump_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      
+      - name: Run script
+        run: |
+          echo ${{ github.head_ref }}
+          cat ./src/src.ts
