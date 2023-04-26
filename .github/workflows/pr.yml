@@ -16,33 +16,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.ref }}
       
       - name: Run script
         run: |
-          echo ${{ github.head_ref }}
+          echo ${{ github.ref }}
           cat ./src/src.ts
       
-      - name: Print labels
+      - name: Print paths
         run: |
-          echo "Label:"
-          for label in "${{ github.event.pull_request.labels }}"; do
-              echo "- $label"
-          done
+          echo "Paths that triggered the workflow:"
+          echo "${{ github.event.paths }}"
       
-      - name: Print target branch
-        run: |
-          echo ${{ github.event.pull_request.base.ref }}
+      # - name: Print labels
+      #   run: |
+      #     echo "Label:"
+      #     for label in "${{ github.event.pull_request.labels }}"; do
+      #         echo "- $label"
+      #     done
       
-      - name: Print changed files
-        run: |
-          echo "Changed files:"
-          echo ${{ github.event.commits.added }}
-          echo ${{ github.event.commits.modified }}
-          echo ${{ github.event.commits.removed }}
+      # - name: Print target branch
+      #   run: |
+      #     echo ${{ github.event.pull_request.base.ref }}
+      
+      # - name: Print changed files
+      #   run: |
+      #     echo "Changed files:"
+      #     echo ${{ github.event.commits.added }}
+      #     echo ${{ github.event.commits.modified }}
+      #     echo ${{ github.event.commits.removed }}
 
-          # for file in "${{ github.event.head_commit.added }} "; do
-          #   if [[ $file == src/* ]]; then
-          #     echo "- $file"
-          #   fi
-          # done
+      #     # for file in "${{ github.event.head_commit.added }} "; do
+      #     #   if [[ $file == src/* ]]; then
+      #     #     echo "- $file"
+      #     #   fi
+      #     # done
