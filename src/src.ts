@@ -1,5 +1,5 @@
 function main() {
   console.log("normal");
   console.log("hdhgfh");
-  console.log("test new workflowddabadggfdsafcddddddd");
+  console.log("test new wordkflowddabadggfdsafcddddddd");
 }

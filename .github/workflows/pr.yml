@@ -24,7 +24,11 @@ jobs:
       - name: Print paths
         run: |
           echo "Paths that triggered the workflow:"
-          echo "${{ github.event.commits }}"
+          echo "${{ github.event.paths }}"
+          echo "${{ github.event.changes }}"
+          echo "${{ github.event.commits.added }}"
+          echo "${{ github.event.commits.modified }}"
+          echo "${{ github.event.commits.removed }}"
       
       # - name: Print labels
       #   run: |
