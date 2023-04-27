@@ -29,6 +29,9 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@allenyummy'
       
+      - name: install python3
+        run: sudo apt-get install -y python3
+      
       - name: Run script
         run: |
           echo ${{ github.ref }}
@@ -70,11 +73,28 @@ jobs:
       - name: Get staged files in two commits
         id: staged-files
         run: |
-          before_commit=${{ github.event.before }}
-          after_commit=${{ github.event.after }}
-          files=$(git diff --name-only $before_commit $after_commit)
-          echo $files
-          echo "staged_files=$files" >> $GITHUB_OUTPUT
+          filesInOneLine=`python3 << END
+          import subprocess
+
+          # Define the two commit hashes you want to compare
+          before_commit = "${{ github.event.before }}"
+          after_commit = "${{ github.event.after }}"
+
+          # Define the git diff command
+          cmd = ["git", "diff", "--name-only", before_commit, after_commit]
+
+          # Run the git diff command and capture its output
+          output = subprocess.check_output(cmd)
+
+          # Split the output into a list of file names
+          file_list = output.decode().strip().split('\n')
+
+          # Concat array to string
+          processStr = '[' + ','.join([f"'{str(ver)}'" for file in file_list]) + ']'
+          print (processStr)
+          END`
+          echo $filesInOneLine
+          echo "staged_files=$filesInOneLine" >> $GITHUB_OUTPUT
 
       - name: Print staged files
         run: |
