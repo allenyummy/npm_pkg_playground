@@ -69,6 +69,8 @@ jobs:
       - name: Get staged files in two commits
         id: staged-files
         run: |
+          echo "${{ toJson(github.event) }}"
+
           # Get before and after
           start_commit=${{ toJson(github.event.before) }}
           end_commit=${{ toJson(github.event.after) }}
