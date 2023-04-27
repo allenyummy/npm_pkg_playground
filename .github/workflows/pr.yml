@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v1
         with:
           ref: ${{ github.ref }}
       
@@ -65,11 +65,11 @@ jobs:
       
       - name: Print changed files
         run: |
+          git log --oneline
 
       - name: Get staged files in two commits
         id: staged-files
         run: |
-          git fetch origin master:refs/remotes/origin/master
           before_commit=${{ github.event.before }}
           after_commit=${{ github.event.after }}
           files=$(git diff --name-only before_commit after_commit)
