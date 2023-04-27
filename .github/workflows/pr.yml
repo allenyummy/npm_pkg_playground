@@ -69,13 +69,13 @@ jobs:
       - name: Get staged files in two commits
         id: staged-files
         run: |
-          commits_len=${{ toJson(github.event.commits).length }}
+          commits_len=${{ toJson(github.event.commits) }}
 
-          # Get the list of files changed between start_commit and end_commit
-          files=$(git diff --name-only HEAD~${commits_len} HEAD)
+          # # Get the list of files changed between start_commit and end_commit
+          # files=$(git diff --name-only HEAD~${commits_len} HEAD)
           
-          # Output the list of files to a variable named 'staged_files'
-          echo "::set-output name=staged_files::$files"
+          # # Output the list of files to a variable named 'staged_files'
+          # echo "::set-output name=staged_files::$files"
 
       - name: Print staged files
         run: |
