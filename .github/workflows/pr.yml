@@ -90,7 +90,7 @@ jobs:
           file_list = output.decode().strip().split('\n')
 
           # Concat array to string
-          processStr = '[' + ','.join([f"'{str(ver)}'" for file in file_list]) + ']'
+          processStr = '[' + ','.join([f"'{str(file)}'" for file in file_list]) + ']'
           print (processStr)
           END`
           echo $filesInOneLine
