@@ -2,6 +2,8 @@ name: Pull Request to master
 
 on:
   push:
+    branches:
+      - master
     paths:
       - 'src/*'
       - '!package.json'
@@ -20,15 +22,43 @@ jobs:
         run: |
           echo ${{ github.ref }}
           cat ./src/src.ts
+          newVersion=$(pnpm version prerelease --preid master --no-git-tag-version)
+          git commit -am `chore(fe/abc): bump version to ${newVersion}`
       
-      - name: Print paths
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check outputs
+        if: ${{ steps.cpr.outputs.pull-request-number }}
         run: |
-          echo "Paths that triggered the workflow:"
-          echo "${{ github.event.paths }}"
-          echo "${{ github.event.changes }}"
-          echo "${{ github.event.commits.added }}"
-          echo "${{ github.event.commits.modified }}"
-          echo "${{ github.event.commits.removed }}"
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+          echo "Pull Request Operation - ${{ steps.cpr.outputs.pull-request-operation }}"
+
+      - name: Enable Automerge
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.REVIEW_TOKEN }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash
+
+      - name: Auto approve
+        uses: juliangruber/approve-pull-request-action@v1
+        with:
+          github-token: ${{ secrets.REVIEW_TOKEN }}
+          number: ${{ steps.cpr.outputs.pull-request-number }}
+      
+      # - name: Print paths
+      #   run: |
+      #     echo "Paths that triggered the workflow:"
+      #     echo "${{ github.event.paths }}"
+      #     echo "${{ github.event.changes }}"
+      #     echo "${{ github.event.commits.added }}"
+      #     echo "${{ github.event.commits.modified }}"
+      #     echo "${{ github.event.commits.removed }}"
       
       # - name: Print labels
       #   run: |
