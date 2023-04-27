@@ -1,5 +1,5 @@
 function main() {
   console.log("normal");
   console.log("hdhgfh");
-  console.log("test new aa");
+  console.log("test new bb");
 }
