@@ -13,15 +13,15 @@ jobs:
   bump_version:
     runs-on: ubuntu-latest
     steps:
-      - name: Configure committer
-        run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>" 
-
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
+      
+      - name: Configure committer
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>" 
       
       - uses: actions/setup-node@v3
         with:
