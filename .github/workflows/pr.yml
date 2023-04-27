@@ -73,6 +73,7 @@ jobs:
           before_commit=${{ github.event.before }}
           after_commit=${{ github.event.after }}
           files=$(git diff --name-only $before_commit $after_commit)
+          echo $files
           echo "::set-output name=staged_files::$files"
 
       - name: Print staged files
