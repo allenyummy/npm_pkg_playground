@@ -93,7 +93,6 @@ jobs:
           processStr = '[' + ','.join([f"'{str(file)}'" for file in file_list]) + ']'
           print (processStr)
           END`
-          echo $filesInOneLine
           echo "staged_files=$filesInOneLine" >> $GITHUB_OUTPUT
 
       - name: Print staged files
