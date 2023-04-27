@@ -18,11 +18,17 @@ jobs:
         with:
           ref: ${{ github.ref }}
       
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@allenyummy'
+      
       - name: Run script
         run: |
           echo ${{ github.ref }}
           cat ./src/src.ts
-          newVersion=$(pnpm version prerelease --preid master --no-git-tag-version)
+          newVersion=$(npm version prerelease --preid master --no-git-tag-version)
           git commit -am `chore(fe/abc): bump version to ${newVersion}`
       
       - name: Create Pull Request
