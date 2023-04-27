@@ -29,7 +29,8 @@ jobs:
           echo ${{ github.ref }}
           cat ./src/src.ts
           newVersion=$(npm version prerelease --preid master --no-git-tag-version)
-          git commit -am `chore(fe/abc): bump version to ${newVersion}`
+          git status
+          git commit -am `chore(fe/abc): bump version to $newVersion`
       
       - name: Create Pull Request
         id: cpr
