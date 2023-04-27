@@ -69,7 +69,7 @@ jobs:
       - name: Get staged files in two commits
         id: staged-files
         run: |
-          commits_len=$(echo "${{ github.event.commits }}" | jq length)
+          commits_len=$(echo "${{ toJson(github.event.commits) }}" | jq length)
 
           # # Get the list of files changed between start_commit and end_commit
           # files=$(git diff --name-only HEAD~${commits_len} HEAD)
