@@ -69,8 +69,8 @@ jobs:
       - name: Get staged files in two commits
         id: staged-files
         run: |
-          before_commit="${{ toJson(github.event.before) }}"
-          after_commit="${{ toJson(github.event.after) }}"
+          before_commit=${{ toJson(github.event.before) }}
+          after_commit=${{ toJson(github.event.after) }}
           # event='${{ toJson(github.event) }}'
           # commits_len=$(echo $event | jq -r '.commits | length')
 
