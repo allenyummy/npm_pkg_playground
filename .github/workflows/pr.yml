@@ -69,15 +69,9 @@ jobs:
       - name: Get staged files in two commits
         id: staged-files
         run: |
-          before_commit=${{ toJson(github.event.before) }}
-          after_commit=${{ toJson(github.event.after) }}
-          # event='${{ toJson(github.event) }}'
-          # commits_len=$(echo $event | jq -r '.commits | length')
-
-          # Get the list of files changed between start_commit and end_commit
+          before_commit=${{ github.event.before }}
+          after_commit=${{ github.event.after }}
           files=$(git diff --name-only before_commit after_commit)
-          
-          # Output the list of files to a variable named 'staged_files'
           echo "::set-output name=staged_files::$files"
 
       - name: Print staged files
