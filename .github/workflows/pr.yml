@@ -66,10 +66,6 @@ jobs:
       - name: Print changed files
         run: |
           echo "${{ toJson(github.event) }}"
-          echo "Changed files:"
-          for file in ${{ toJson(github.event.inputs.paths) }}; do
-            echo "- $file"
-          done
       
       # - name: Print labels
       #   run: |
