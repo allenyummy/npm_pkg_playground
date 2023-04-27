@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
       
@@ -70,10 +70,9 @@ jobs:
       - name: Get staged files in two commits
         id: staged-files
         run: |
-          git fetch origin master:refs/remotes/origin/master
-          before_commit=${{ toJson(github.event.before) }}
-          after_commit=${{ toJson(github.event.after) }}
-          files=$(git diff --name-only before_commit after_commit)
+          before_commit=${{ github.event.before }}
+          after_commit=${{ github.event.after }}
+          files=$(git diff --name-only $before_commit $after_commit)
           echo "::set-output name=staged_files::$files"
 
       - name: Print staged files
