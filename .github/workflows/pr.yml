@@ -70,8 +70,9 @@ jobs:
       - name: Get staged files in two commits
         id: staged-files
         run: |
-          before_commit=${{ github.event.before }}
-          after_commit=${{ github.event.after }}
+          git fetch origin master:refs/remotes/origin/master
+          before_commit=${{ toJson(github.event.before) }}
+          after_commit=${{ toJson(github.event.after) }}
           files=$(git diff --name-only before_commit after_commit)
           echo "::set-output name=staged_files::$files"
 
