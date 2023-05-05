@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'src/*'
+      - 'src/*'         ## packages/*/src
       - '!package.json'
       - '!package-lock.json'
 
