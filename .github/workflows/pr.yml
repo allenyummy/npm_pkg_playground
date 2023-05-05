@@ -9,6 +9,9 @@ on:
       - '!package.json'
       - '!package-lock.json'
 
+concurrency:
+  group: ci-${{ github.ref }}
+
 jobs:
   bump_version:
     runs-on: ubuntu-latest
