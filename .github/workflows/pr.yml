@@ -38,6 +38,8 @@ jobs:
       - name: Run script
         run: |
           echo ${{ github.ref }}
+          branchName=${GITHUB_REF#refs/heads/}
+          echo $branchName
           cat ./src/src.ts
           # newVersion=$(npm version prerelease --preid master --no-git-tag-version)
           # git status
