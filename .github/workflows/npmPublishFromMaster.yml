@@ -1,5 +1,5 @@
 # Principle 0: Always increment the version by 1, whether it's a major, minor, or patch.
-# Principle 1: Bump minor version for master, while patch version for production, 
+# Principle 1: Bump minor version for master, while patch version for production,
 # Principle 2: "latest" tag is always published from master, while "prod-latest" is always published from production.
 
 name: Publish npm pacakge from master branch
@@ -7,6 +7,9 @@ on:
   push:
     branches:
       - master
+
+concurrency:
+  group: ci-${{ github.ref }}
 
 jobs:
   publish-pkg-from-master:
@@ -23,13 +26,13 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@allenyummy'
-      
+          node-version: "16.x"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@allenyummy"
+
       - name: install python3
         run: sudo apt-get install -y python3
-      
+
       - name: get remote versions and set output for 'steps.remote.outputs.remote-versions'
         id: remote
         run: |
@@ -47,7 +50,7 @@ jobs:
         uses: EndBug/version-check@v2
         with:
           diff-search: true
-          
+
       - name: set output for 'steps.compare.outputs.[should-release/debug-info]'
         id: compare
         run: |
@@ -57,17 +60,17 @@ jobs:
           checkCommit=${{ steps.check.outputs.commit }}
           shouldRelease=true
           debugInfo="${debugInfo:='shouldRelease is $shouldRelease because new minor version is detected and not existed in registry yet.'}"
-          
+
           if [[ $checkChanged = "false" ]]; then
              shouldRelease=false
              debugInfo="shouldRelease is $shouldRelease because no new version is detected."
           fi
-          
+
           if [[ $checkChanged = "true" ]] && [[ $checkType != "minor" ]]; then
              shouldRelease=false
              debugInfo="shouldRelease is $shouldRelease because new version is not updated in minor but in $checkType."
           fi
-          
+
           isAlreadyPublished=`python3 << END
           print (str('$checkNewVersion' in ${{ steps.remote.outputs.remote-versions }}).lower())
           END`
@@ -75,10 +78,10 @@ jobs:
              shouldRelease=false
              debugInfo="shouldRelease is $shouldRelease because new version is already existed in registry."
           fi
-          
+
           echo "should-release=$shouldRelease" >> $GITHUB_OUTPUT
           echo "debug-info=$debugInfo" >> $GITHUB_OUTPUT
-          
+
       - name: echo all steps outputs for debug
         run: |
           npm version
