@@ -1,0 +1,68 @@
+name: Auto Label PR
+
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - master
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR Title
+        id: pr_title
+        run: |
+          echo "::set-output name=title::${{ github.event.pull_request.title }}"
+
+      - name: Check Target Branch
+        id: check_branch
+        run: |
+          echo "::set-output name=target_branch::${{ github.event.pull_request.base.ref }}"
+      
+      - name: Check for Bug label
+        id: check_label
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const label = "Bug";
+            const response = await github.issues.listLabelsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            const labelExists = response.data.some(l => l.name === label);
+            console.log(labelExists ? 'Label exists' : 'Label does not exist');
+            console.log(`::set-output name=labelExists::${labelExists}`);
+
+      - name: Create Bug label if not exists
+        if: steps.check_label.outputs.labelExists == 'false'
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const label = "Bug";
+            github.issues.createLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: label,
+              color: "d73a4a" // Customize the label color if desired
+            });
+
+      - name: Assign Label
+        if: |
+          contains(steps.pr_title.outputs.title, 'bug') &&
+          steps.check_branch.outputs.target_branch == 'master'
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const label = "Bug";
+            github.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: [label]
+            });
