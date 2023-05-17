@@ -29,7 +29,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const label = "Bug";
-            const response = await github.issues.listLabelsForRepo({
+            const response = await github.rest.issues.listLabelsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo
             });
