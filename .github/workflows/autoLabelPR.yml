@@ -44,7 +44,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const label = "Bug";
-            github.issues.createLabel({
+            github.rest.issues.createLabel({
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: label,
