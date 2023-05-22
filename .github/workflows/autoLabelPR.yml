@@ -50,8 +50,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               description: `Target branch is ${label}`,
-              name: label,
-              color: color
+              name: label
             });
 
       - name: Add label to pull request
