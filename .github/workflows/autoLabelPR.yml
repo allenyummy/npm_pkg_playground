@@ -38,9 +38,9 @@ jobs:
 
             console.log('Label not found. Will create ', label);
 
-            const color = '#0052CC'
+            const color = '#0052CC';
             if (label.includes('hotfix')) {
-              const color = '#B60205'
+              const color = '#B60205';
             }
 
             await github.rest.issues.addLabels({
@@ -48,5 +48,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: [label],
-              color: color,
-            })
+              color: color
+            });
