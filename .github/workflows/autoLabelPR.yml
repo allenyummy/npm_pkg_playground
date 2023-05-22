@@ -41,9 +41,9 @@ jobs:
 
             console.log('Label not exist: ', label);
 
-            const color = '#0052CC';
+            const color = '0052CC';
             if (label.includes('hotfix')) {
-              const color = '#B60205';
+              const color = 'B60205';
             }
 
             await github.rest.issues.createLabel({
