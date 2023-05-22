@@ -25,7 +25,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const label = ${{ steps.target_branch.outputs.target-branch }};
+            const label = '${{ steps.target_branch.outputs.target-branch }}';
             const response = await github.rest.issues.listLabelsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo
