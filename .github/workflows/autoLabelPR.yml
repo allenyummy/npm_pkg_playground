@@ -14,54 +14,39 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Check PR Title
-        id: pr_title
+      - name: Check target branch
+        id: target_branch
         run: |
-          echo "::set-output name=title::${{ github.event.pull_request.title }}"
+          targetBranch=${{ github.event.pull_request.base.ref }}"
+          echo "target-branch=$targetBranch" >> $GITHUB_OUTPUT
 
-      - name: Check Target Branch
-        id: check_branch
-        run: |
-          echo "::set-output name=target_branch::${{ github.event.pull_request.base.ref }}"
-
-      - name: Check for Bug label
-        id: check_label
+      - name: Add label to pull request
         uses: actions/github-script@v6
         with:
           script: |
-            const label = "Bug";
+            const label = steps.target_branch.target-branch;
             const response = await github.rest.issues.listLabelsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo
             });
             const labelExists = response.data.some(l => l.name === label);
-            console.log(labelExists ? 'Label exists' : 'Label does not exist');
-            console.log(`::set-output name=labelExists::${labelExists}`);
 
-      - name: Create Bug label if not exists
-        if: steps.check_label.outputs.labelExists == 'false'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const label = "Yulun";
-            github.rest.issues.addLabels({
+            if (labelExists) {
+              console.log('Label found:', label);
+              return;
+            }
+
+            console.log('Label not found. Will create ', label);
+
+            const color = '#0052CC'
+            if (label.includes('hotfix')) {
+              const color = '#B60205'
+            }
+
+            await github.rest.issues.addLabels({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              labels: ["triage"]
+              labels: [label],
+              color: color,
             })
-
-      - name: Assign Label
-        if: |
-          contains(steps.pr_title.outputs.title, 'bug') &&
-          steps.check_branch.outputs.target_branch == 'master'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const label = "Bug";
-            github.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: [label]
-            });
