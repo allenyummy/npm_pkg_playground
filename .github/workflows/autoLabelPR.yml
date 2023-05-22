@@ -11,7 +11,7 @@ jobs:
   auto-label:
     runs-on: ubuntu-latest
     permissions:
-      issues: write
+      pull-requests: write
 
     steps:
       - name: Check PR Title
@@ -26,9 +26,8 @@ jobs:
 
       - name: Check for Bug label
         id: check_label
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const label = "Bug";
             const response = await github.rest.issues.listLabelsForRepo({
@@ -56,9 +55,8 @@ jobs:
         if: |
           contains(steps.pr_title.outputs.title, 'bug') &&
           steps.check_branch.outputs.target_branch == 'master'
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const label = "Bug";
             github.issues.addLabels({
