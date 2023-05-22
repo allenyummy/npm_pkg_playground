@@ -6,6 +6,8 @@ on:
       - opened
     branches:
       - master
+      - release/*
+      - hotfix/*
 
 jobs:
   auto-label:
@@ -45,6 +47,7 @@ jobs:
             }
 
             await github.rest.issues.createLabel({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               description: `Target branch is $label`,
@@ -70,6 +73,7 @@ jobs:
             }
 
             await github.rest.issues.addLabels({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: [label],
