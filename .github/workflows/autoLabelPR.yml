@@ -41,15 +41,15 @@ jobs:
 
             console.log('Label not exist: ', label);
 
-            const color = '0052CC';
-            if (label.includes('hotfix')) {
-              const color = 'B60205';
-            }
+            # const color = '0052CC';
+            # if (label.includes('hotfix')) {
+            #   const color = 'B60205';
+            # }
 
             await github.rest.issues.createLabel({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              description: `Target branch is $label`,
+              description: `Target branch is ${label}`,
               name: label,
               color: color
             });
