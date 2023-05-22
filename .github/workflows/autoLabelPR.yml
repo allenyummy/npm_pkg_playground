@@ -23,6 +23,37 @@ jobs:
           echo "target-branch=$targetBranch" >> $GITHUB_OUTPUT
           echo "target-branch: $targetBranch"
 
+      - name: Create label if not exists
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const label = '${{ steps.target_branch.outputs.target-branch }}';
+            const response = await github.rest.issues.listLabelsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            const labelExists = response.data.some(l => l.name === label);
+
+            if (labelExists) {
+              console.log('Label exists:', label);
+              return;
+            }
+
+            console.log('Label not exist: ', label);
+
+            const color = '0052CC';
+            if (label.includes('hotfix')) {
+              const color = 'B60205';
+            }
+
+            await github.rest.issues.createLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              description: `Target branch is ${label}`,
+              name: label,
+              color: color
+            });
+
       - name: Add label to pull request
         uses: actions/github-script@v6
         with:
