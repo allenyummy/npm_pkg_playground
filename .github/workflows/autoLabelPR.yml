@@ -10,6 +10,8 @@ on:
 jobs:
   auto-label:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
 
     steps:
       - name: Check PR Title
@@ -21,7 +23,7 @@ jobs:
         id: check_branch
         run: |
           echo "::set-output name=target_branch::${{ github.event.pull_request.base.ref }}"
-      
+
       - name: Check for Bug label
         id: check_label
         uses: actions/github-script@v5
@@ -39,17 +41,16 @@ jobs:
 
       - name: Create Bug label if not exists
         if: steps.check_label.outputs.labelExists == 'false'
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const label = "Bug";
-            github.rest.issues.createLabel({
+            const label = "Yulun";
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              name: label,
-              color: "d73a4a" // Customize the label color if desired
-            });
+              labels: ["triage"]
+            })
 
       - name: Assign Label
         if: |
