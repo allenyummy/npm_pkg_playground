@@ -30,14 +30,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             });
-            const labelExists = response.data.some(l => l.name === label);
 
-            if (labelExists) {
-              console.log('Label found:', label);
-              return;
-            }
-
-            console.log('Label not found. Will create ', label);
+            console.log('Label: ', label);
 
             const color = '#0052CC';
             if (label.includes('hotfix')) {
