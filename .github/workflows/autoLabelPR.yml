@@ -19,12 +19,13 @@ jobs:
         run: |
           targetBranch=${{ github.event.pull_request.base.ref }}
           echo "target-branch=$targetBranch" >> $GITHUB_OUTPUT
+          echo "target-branch: $targetBranch"
 
       - name: Add label to pull request
         uses: actions/github-script@v6
         with:
           script: |
-            const label = ${{ steps.target_branch.target-branch }};
+            const label = ${{ steps.target_branch.outputs.target-branch }};
             const response = await github.rest.issues.listLabelsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo
