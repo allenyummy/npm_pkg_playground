@@ -60,22 +60,10 @@ jobs:
         with:
           script: |
             const label = '${{ steps.target_branch.outputs.target-branch }}';
-            const response = await github.rest.issues.listLabelsForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo
-            });
-
-            console.log('Label: ', label);
-
-            const color = '#0052CC';
-            if (label.includes('hotfix')) {
-              const color = '#B60205';
-            }
 
             await github.rest.issues.addLabels({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: [label],
-              color: color
             });
