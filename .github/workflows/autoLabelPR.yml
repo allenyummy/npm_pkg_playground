@@ -22,7 +22,7 @@ jobs:
           targetBranch=${{ github.event.pull_request.base.ref }}
           echo "target-branch=$targetBranch" >> $GITHUB_OUTPUT
           echo "target-branch: $targetBranch"
-      
+
       - name: Create label if not exists
         uses: actions/github-script@v6
         with:
@@ -47,7 +47,6 @@ jobs:
             }
 
             await github.rest.issues.createLabel({
-              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               description: `Target branch is $label`,
